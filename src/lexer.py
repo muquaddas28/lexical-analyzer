@@ -33,21 +33,21 @@ class LexicalAnalyzer:
         ]
         self.master_regex = '|'.join(
             f'(?P<{name}>{pattern})' for name, pattern in self.token_rules
-        )
+        ) #KEYWORD | NUMBER | IDENTIFIER | 
 
     def tokenize(self, source_code):
         tokens      = []
         errors      = []
-        symbol_table = {}
+        symbol_table = {} #Variables ki information store karne ke liye.
         line_num    = 1
-        line_start  = 0
-        current_type = 'unknown'
+        line_start  = 0 #calculte column no
+        current_type = 'unknown' #Kyuki abhi tak koi datatype nahi mila.
         scope_depth  = 0
 
-        for match in re.finditer(self.master_regex, source_code):
-            kind  = match.lastgroup
+        for match in re.finditer(self.master_regex, source_code): #Returns matches one by one
+            kind  = match.lastgroup #Token kis category ka hai.
             value = match.group(kind)
-            col   = match.start() - line_start + 1
+            col   = match.start() - line_start + 1 #Column number nikalne ke liye.
 
             if kind == 'NEWLINE':
                 line_num  += 1
@@ -79,7 +79,7 @@ class LexicalAnalyzer:
 
                 if value == '{':
                     scope_depth += 1
-                elif value == '}':
+                elif value == '}':  #block ends 
                     scope_depth = max(0, scope_depth - 1)
                     current_type = 'unknown'
 

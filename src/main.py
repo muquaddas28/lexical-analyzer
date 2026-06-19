@@ -1,3 +1,4 @@
+import utils.session
 import tkinter as tk
 from gui import LexerGUI
 

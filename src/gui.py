@@ -18,6 +18,10 @@ class LexerGUI:
     ACCENT_LT = "#f3efff"
     SUCCESS = "#3a9a8c"
     DANGER = "#b85c5c"
+    ERROR_HDR = "#9b5d76"
+    ERROR_BG = "#f7e6eb"
+    ERROR_BORDER = "#d8a6b6"
+    ERROR_TEXT = "#7a243d"
     TEXT = "#1a3545"
     BLUE = "#2d7888"
     BLUE_LT = "#3d93a5"
@@ -341,13 +345,22 @@ class LexerGUI:
         self.stats_table.pack(fill=tk.BOTH, expand=True)
 
     def _stats_bar(self):
-        tk.Frame(self.root, bg="#b8d8e0", height=1).pack(fill=tk.X, padx=14)
-        bar = tk.Frame(self.root, bg=self.PANEL_DARK, pady=7)
+        title_bar = tk.Frame(self.root, bg=self.ERROR_HDR)
+        title_bar.pack(fill=tk.X, padx=14, pady=(0, 0))
+        tk.Label(
+            title_bar,
+            text="Lexical Error Detection Log",
+            font=("Helvetica", 12, "bold"),
+            fg="#fff8fb",
+            bg=self.ERROR_HDR,
+        ).pack(side=tk.LEFT, padx=20, pady=6)
+
+        bar = tk.Frame(self.root, bg=self.ERROR_HDR, pady=10)
         bar.pack(fill=tk.X, padx=14)
 
-        self.lbl_tokens = self._stat(bar, "Tokens: -")
-        self.lbl_identifiers = self._stat(bar, "Identifiers: -")
-        self.lbl_errors = self._stat(bar, "Errors: -")
+        self.lbl_tokens = self._stat(bar, "Tokens: -", boxed=False)
+        self.lbl_identifiers = self._stat(bar, "Identifiers: -", boxed=False)
+        self.lbl_errors = self._stat(bar, "Errors: -", boxed=False)
         self.lbl_tokens.pack(side=tk.LEFT, padx=(14, 28))
         self.lbl_identifiers.pack(side=tk.LEFT, padx=(0, 28))
         self.lbl_errors.pack(side=tk.LEFT)
@@ -362,19 +375,19 @@ class LexerGUI:
         self.lbl_status.pack(side=tk.RIGHT, padx=14)
 
     def _error_panel(self):
-        tk.Frame(self.root, bg="#b8d8e0", height=1).pack(fill=tk.X, padx=14)
-        outer = tk.Frame(self.root, bg="#fceaea")
+        outer = tk.Frame(
+            self.root,
+            bg=self.ERROR_BG,
+            highlightbackground=self.ERROR_BORDER,
+            highlightthickness=1,
+        )
         outer.pack(fill=tk.X, padx=14, pady=(0, 14), ipady=4)
-
-        hdr = tk.Frame(outer, bg="#fceaea")
-        hdr.pack(fill=tk.X, padx=12, pady=(7, 0))
-        tk.Label(hdr, text="Error Log", font=("Helvetica", 12, "bold"), fg=self.DANGER, bg="#fceaea").pack(side=tk.LEFT)
 
         self.error_log = tk.Text(
             outer,
             font=("Consolas", 12),
-            bg="#fceaea",
-            fg="#8b2020",
+            bg=self.ERROR_BG,
+            fg=self.ERROR_TEXT,
             height=7,
             state=tk.DISABLED,
             relief="flat",
@@ -390,8 +403,9 @@ class LexerGUI:
         tk.Label(row, text=text, font=("Helvetica", 8, "bold"), fg=self.ACCENT_LT, bg=parent["bg"]).pack(side=tk.LEFT)
         tk.Frame(row, bg=self.ACCENT_LT, height=1).pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(8, 0), pady=5)
 
-    def _stat(self, parent, text):
-        return tk.Label(parent, text=text, font=("Consolas", 11, "bold"), fg="#ffffff", bg=self.PANEL_DARK)
+    def _stat(self, parent, text, boxed=True):
+        bg = self.PANEL_DARK if boxed else self.ERROR_HDR
+        return tk.Label(parent, text=text, font=("Consolas", 11, "bold"), fg="#ffffff", bg=bg)
 
     def _btn(self, parent, text, cmd, color, hover):
         button = tk.Button(
